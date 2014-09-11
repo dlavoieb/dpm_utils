@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ -e ~/.bash_profile ]]; then
+	file=~/.bash_profile
+elif [[ -e ~/.bashrc ]]; then
+	file=~/.bashrc
+fi
+
+echo export PATH=\"$PWD:\$PATH\" >> $file

@@ -1,0 +1,14 @@
+#!/bin/bash
+if [[ "$#" -ne "1" ]]; then
+	echo Missing main file
+else
+	output=${1%.java}
+	rm -rf *.class *.nxj *.nxd
+	for file in $(ls *.java)
+	do
+		echo Compiling $file
+		nxjc $file
+	done
+	nxjlink -o $output.nxj $output
+	nxjupload -u $output.nxj
+fi
