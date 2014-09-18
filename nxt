@@ -1,14 +1,36 @@
 #!/bin/bash
-if [[ "$#" -ne "1" ]]; then
+
+if [[ "$#" -lt "1" ]]; then
 	echo Missing main file
+elif [[ "$1" == "-a" ]]; then
+	#When Compiling all files in a directory
+	if [[ "$#" -lt "2" ]]; then
+		echo Missing main file
+	else
+		rm -rf *.class *.nxj *.nxd
+		output=${2%.java}   
+		for file in $(ls *.java);
+		do
+			echo Compiling $file
+			nxjc $file
+		done
+		nxjlink -o $output.nxj $output
+		nxjupload -u $output.nxj
+	fi
 else
-	output=${1%.java}
-	rm -rf *.class *.nxj *.nxd
-	for file in $(ls *.java)
-	do
-		echo Compiling $file
-		nxjc $file
+	#This is the case where only specific files are compiled
+	for file in $@; do
+		case file in
+			$0 )
+				;;
+			** )
+				rm -rf $file.class $file.nxj $file.nxd
+				output=${file%.java}   
+				echo Compiling $file
+				nxjc $file
+				nxjlink -o $output.nxj $output
+				nxjupload -u $output.nxj
+				;;
+		esac
 	done
-	nxjlink -o $output.nxj $output
-	nxjupload -u $output.nxj
 fi
